@@ -25,7 +25,7 @@ The problem with this solution is its close connection to the Swing toolkit, whi
 
 Another commonly recommended method is the use of command-line tools. However, this would involve building an infrastructure with a server and e.g. require a REST API. I really did not want to do this effort.
 
-So what I had in mind was an API that manages a handful of classes and is written in pure Java. I found rtf-html-php. The project is written entirely in PHP, but perfectly meets all my requirements and was easy to port. I had to make some changes, such as set data types for all variables or replace the expandable arrays with the ArrayList, but my project is a very accurate adaptation of the PHP library.
+So what I had in mind was an API that manages a handful of classes and is written in pure Java. I found [rtf-html-php](https://github.com/henck/rtf-html-php). The project is written entirely in PHP, but perfectly meets all my requirements and was easy to port. I had to make some changes, such as set data types for all variables or replace the expandable arrays with the ArrayList, but my project is a very accurate adaptation of the PHP library.
 
 ## Features
 
