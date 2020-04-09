@@ -179,6 +179,19 @@ public class RtfHtml {
 			state.hidden = rtfWord.parameter > 0;
 		} else if (rtfWord.word.equals("fs")) {
 			state.fontSize = (int) Math.ceil((rtfWord.parameter / 24.0) * 16.0);
+		} else if (rtfWord.word.equals("dn")) {
+			state.dnup = (int) Math.ceil((rtfWord.parameter / 24.0) * -16.0);
+		} else if (rtfWord.word.equals("up")) {
+			state.dnup = (int) Math.ceil((rtfWord.parameter / 24.0) * 16.0);
+		} else if (rtfWord.word.equals("sub")) {
+			state.subscript = true;
+			state.superscript = false;
+		} else if (rtfWord.word.equals("super")) {
+			state.subscript = false;
+			state.superscript = true;
+		} else if (rtfWord.word.equals("nosupersub")) {
+			state.subscript = false;
+			state.superscript = false;
 		} else if (rtfWord.word.equals("cf")) {
 			state.textColor = rtfWord.parameter;
 		} else if (rtfWord.word.equals("cb") || rtfWord.word.equals("chcbpat") || rtfWord.word.equals("highlight")) {
@@ -246,6 +259,23 @@ public class RtfHtml {
 			if (state.fontSize != 0) {
 				span += "font-size:" + state.fontSize + "px;";
 			}
+			// RTF dn/up:
+			// By spec, RTF fs and RTF dn/up are independent of each other; 
+			// there is no documented "auto-reducing" for the font size.
+			// In the wild, RTF dn/up often is given together with a "full" RTF fs but rendered with reduced font size.
+			// Thus, RTF dn/up is rendered with implicit font size reduction.
+			// This font-size setting supersedes the explicit "fs" font-size setting. 
+			if (state.dnup != 0) {
+				span += calculateReducedFontSize() + "vertical-align:" + state.dnup + "px;";
+			}
+			// RTF sub/super: 
+			// Reduced font-size and vertical-align supersede settings from fs,dn,up.
+			if (state.subscript) {
+				span += calculateReducedFontSize() + "vertical-align:sub;";
+			}
+			if (state.superscript) {
+				span += calculateReducedFontSize() + "vertical-align:super;";
+			}
 			if (state.textColor != 0) {
 				span += "color:" + printColor(state.textColor) + ";";
 			}
@@ -265,6 +295,23 @@ public class RtfHtml {
 			output += txt;
 		}
 		newRootPar = false;
+	}
+
+	/**
+	 * Calculate reduced font size based on actual state.
+	 * If actual state defines a font size, then CSS fon-size with 2/3 of this is returned,
+	 * else "smaller" is returned.
+	 * @return CSS for reduced font size.
+	 */
+	protected String calculateReducedFontSize() {
+		String css;
+		if (state.fontSize != 0) {
+			int reducedFontSize = (int) Math.ceil((state.fontSize / 3.0) * 2.0);
+			css = "font-size:" + reducedFontSize + "px;";
+		} else {
+			css = "font-size:smaller;";
+		}
+		return css;
 	}
 
 	/**
