@@ -18,6 +18,7 @@ public class RtfHtml {
 	private RtfState previousState;
 	private Map<String, Boolean> openedTags;
 	private List<String> colortbl;
+	private boolean newRootPar;
 
 	/**
 	 * Transforms an RTF group with all children into HTML tags.
@@ -55,6 +56,7 @@ public class RtfHtml {
 
 		// Do the job.
 		output = "<p>";
+		newRootPar = true;
 		formatGroup(root);
 		if (page) {
 			wrapTags();
@@ -211,6 +213,7 @@ public class RtfHtml {
 
 			output += "<p>";
 			openedTags.put("p", true);
+			newRootPar = true;
 		}
 	}
 
@@ -221,8 +224,8 @@ public class RtfHtml {
 	 *            text to be formatted
 	 */
 	protected void applyStyle(String txt) {
-		// Create span only when a style change occur.
-		if (!state.equals(previousState)) {
+		// Create span only when a style change occurs or a root paragraph start was just inserted.
+		if (!state.equals(previousState) || newRootPar) {
 			String span = "";
 
 			if (state.bold) {
@@ -261,6 +264,7 @@ public class RtfHtml {
 		} else {
 			output += txt;
 		}
+		newRootPar = false;
 	}
 
 	/**
