@@ -331,6 +331,9 @@ public class RtfHtml {
 		if (rtfSymbol.symbol == '\'') {
 			applyStyle("&#" + rtfSymbol.parameter + ";");
 		}
+		if (rtfSymbol.symbol == '~') {
+			output += "&nbsp;";
+		}
 	}
 
 	/**
