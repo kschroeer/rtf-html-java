@@ -30,6 +30,30 @@ public class TextTest {
 	}
 
 	@Test
+	public void testParagraphsWithUnchangedFontFormat() throws RtfParseException {
+		String expectedString = "<p><span style=\"font-size:15px;\">This is the first line.</span></p>"
+				+ "<p><span style=\"font-size:15px;\">And this is the second one with unchanged font format.</span></p><p>";
+
+		StringBuilder rtfBuilder = new StringBuilder();
+		rtfBuilder.append(
+				"{\\rtf1\\ansi\\ansicpg1252\\deff0\\nouicompat\\deflang1031\r\n");
+		rtfBuilder.append("{\\fonttbl{\\f0\\fnil\\fcharset0 Calibri;}}\r\n");
+		rtfBuilder.append("{\\*\\generator Riched20 6.3.9600}\\viewkind4\\uc1 \r\n");
+		rtfBuilder.append("\\pard\\sa200\\sl276\\slmult1\\f0\\fs22\\lang7 This is the first line.");
+		rtfBuilder.append("\\par And this is the second one with unchanged font format.");
+		rtfBuilder.append("\\par}\r\n");
+		String rtfString = rtfBuilder.toString();
+
+		RtfReader reader = new RtfReader();
+		reader.parse(rtfString);
+
+		RtfHtml formatter = new RtfHtml();
+		String htmlString = formatter.format(reader.root);
+
+		Assert.assertEquals(expectedString, htmlString);
+	}
+
+	@Test
 	public void testEscapeSequences() throws RtfParseException {
 		String expectedString = "<p><span style=\"font-size:15px;\">Hello {World}</span></p><p>";
 
