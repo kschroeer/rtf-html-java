@@ -9,7 +9,7 @@ import org.rtf.RtfReader;
 public class FontTest {
 	@Test
 	public void testFontNormal() throws RtfParseException {
-		String expectedString = "<p><span style=\"font-size:15px;\">Hello World</span></p><p>";
+		String expectedString = "<p><span style=\"font-family:'Calibri';font-size:15px;\">Hello World</span></p><p>";
 
 		StringBuilder rtfBuilder = new StringBuilder();
 		rtfBuilder.append(
@@ -30,7 +30,7 @@ public class FontTest {
 
 	@Test
 	public void testDifferentFontSizes() throws RtfParseException {
-		String expectedString = "<p><span style=\"font-size:16px;\">Hello</span><span style=\"font-size:19px;\"> </span><span style=\"font-size:22px;\">World</span></p><p>";
+		String expectedString = "<p><span style=\"font-family:'Calibri';font-size:16px;\">Hello</span><span style=\"font-family:'Calibri';font-size:19px;\"> </span><span style=\"font-family:'Calibri';font-size:22px;\">World</span></p><p>";
 
 		StringBuilder rtfBuilder = new StringBuilder();
 		rtfBuilder.append(
@@ -52,11 +52,11 @@ public class FontTest {
 	@Test
 	public void testSuperscriptSubscriptByRTFUpDn() throws RtfParseException {
 		String expectedString = "<p>"
-				+ "<span style=\"font-size:16px;\">Hello</span>"
-				+ "<span style=\"font-size:19px;\"> </span>"
-				+ "<span style=\"font-size:22px;\">World</span>"
-				+ "<span style=\"font-size:15px;font-size:10px;vertical-align:-4px;\">down by 4px and smaller</span>"
-				+ "<span style=\"font-size:15px;font-size:10px;vertical-align:4px;\">up by 4px and smaller</span>"
+				+ "<span style=\"font-family:'Calibri';font-size:16px;\">Hello</span>"
+				+ "<span style=\"font-family:'Calibri';font-size:19px;\"> </span>"
+				+ "<span style=\"font-family:'Calibri';font-size:22px;\">World</span>"
+				+ "<span style=\"font-family:'Calibri';font-size:15px;font-size:10px;vertical-align:-4px;\">down by 4px and smaller</span>"
+				+ "<span style=\"font-family:'Calibri';font-size:15px;font-size:10px;vertical-align:4px;\">up by 4px and smaller</span>"
 				+ "</p><p>";
 
 		StringBuilder rtfBuilder = new StringBuilder();
@@ -85,12 +85,12 @@ public class FontTest {
 	@Test
 	public void testSuperscriptSubscriptByRTFSuperSub() throws RtfParseException {
 		String expectedString = "<p>"
-				+ "<span style=\"font-size:16px;\">Hello</span>"
-				+ "<span style=\"font-size:19px;\"> </span>"
-				+ "<span style=\"font-size:22px;\">World</span>"
-				+ "<span style=\"font-size:15px;font-size:10px;vertical-align:sub;\">down by sub</span>"
-				+ "<span style=\"font-size:15px;font-size:10px;vertical-align:super;\">up by super</span>"
-				+ "<span style=\"font-size:15px;\">regular again</span>"
+				+ "<span style=\"font-family:'Calibri';font-size:16px;\">Hello</span>"
+				+ "<span style=\"font-family:'Calibri';font-size:19px;\"> </span>"
+				+ "<span style=\"font-family:'Calibri';font-size:22px;\">World</span>"
+				+ "<span style=\"font-family:'Calibri';font-size:15px;font-size:10px;vertical-align:sub;\">down by sub</span>"
+				+ "<span style=\"font-family:'Calibri';font-size:15px;font-size:10px;vertical-align:super;\">up by super</span>"
+				+ "<span style=\"font-family:'Calibri';font-size:15px;\">regular again</span>"
 				+ "</p><p>";
 
 		StringBuilder rtfBuilder = new StringBuilder();
@@ -119,7 +119,7 @@ public class FontTest {
 
 	@Test
 	public void testFontColor() throws RtfParseException {
-		String expectedString = "<p><span style=\"font-size:15px;color:#8fb08c;\">Hello World</span></p><p>";
+		String expectedString = "<p><span style=\"font-family:'Calibri';font-size:15px;color:#8fb08c;\">Hello World</span></p><p>";
 
 		StringBuilder rtfBuilder = new StringBuilder();
 		rtfBuilder.append(
@@ -141,7 +141,7 @@ public class FontTest {
 
 	@Test
 	public void testBold() throws RtfParseException {
-		String expectedString = "<p><span style=\"font-weight:bold;font-size:15px;\">Hello World</span></p><p>";
+		String expectedString = "<p><span style=\"font-family:'Calibri';font-weight:bold;font-size:15px;\">Hello World</span></p><p>";
 
 		StringBuilder rtfBuilder = new StringBuilder();
 		rtfBuilder.append(
@@ -162,7 +162,7 @@ public class FontTest {
 
 	@Test
 	public void testItalic() throws RtfParseException {
-		String expectedString = "<p><span style=\"font-style:italic;font-size:15px;\">Hello World</span></p><p>";
+		String expectedString = "<p><span style=\"font-family:'Calibri';font-style:italic;font-size:15px;\">Hello World</span></p><p>";
 
 		StringBuilder rtfBuilder = new StringBuilder();
 		rtfBuilder.append(
@@ -183,7 +183,7 @@ public class FontTest {
 
 	@Test
 	public void testUnderline() throws RtfParseException {
-		String expectedString = "<p><span style=\"text-decoration:underline;font-size:15px;\">Hello World</span></p><p>";
+		String expectedString = "<p><span style=\"font-family:'Calibri';text-decoration:underline;font-size:15px;\">Hello World</span></p><p>";
 
 		StringBuilder rtfBuilder = new StringBuilder();
 		rtfBuilder.append(
@@ -204,7 +204,7 @@ public class FontTest {
 
 	@Test
 	public void testStrikethrough() throws RtfParseException {
-		String expectedString = "<p><span style=\"text-decoration:strikethrough;font-size:15px;\">Hello World</span></p><p>";
+		String expectedString = "<p><span style=\"font-family:'Calibri';text-decoration:strikethrough;font-size:15px;\">Hello World</span></p><p>";
 
 		StringBuilder rtfBuilder = new StringBuilder();
 		rtfBuilder.append(

@@ -17,6 +17,7 @@ public class RtfHtml {
 	private RtfState state;
 	private RtfState previousState;
 	private Map<String, Boolean> openedTags;
+	private List<String> fonttbl;
 	private List<String> colortbl;
 	private boolean newRootPar;
 
@@ -66,6 +67,103 @@ public class RtfHtml {
 	}
 
 	/**
+	 * @param fontTblGrp
+	 *            list with child elements of the "fonttbl" group element
+	 */
+	protected void extractFontTable(List<RtfElement> fontTblGrp) {
+		// {\fonttbl
+		// {\f0\fswiss\fcharset0\fprq2 Arial;}
+		// {\f1\froman\fcharset2\fprq2 Symbol;}
+		// }
+		// index 0 is the "default" font (in fact: default font is declared by /deffN in RTF header section)
+		List<String> fonttbl = new ArrayList<>();
+		
+		int c = fontTblGrp.size();
+		
+		for (int i = 1; i < c; i++) {
+			// assume that font table entries are present in order of their index, i. e. f0, f1, f2...
+			if (fontTblGrp.get(i) instanceof RtfGroup) {
+				RtfGroup fontDesc = (RtfGroup) fontTblGrp.get(i);
+				String fontFamily = "";
+				// process font description group
+				List<RtfElement> fontAttrs = fontDesc.children;
+				// assume that the font index is the first (at least) RtfElement in the font descriptor RtfGroup.
+				// Only RtfControlWord and RtfText elements are processed here. RtfGroups are not processed.
+				for (int fa = 1; fa < fontAttrs.size(); fa++) {
+					RtfElement faElem = fontAttrs.get(fa);
+					if (faElem instanceof RtfControlWord) {
+						// font attribute
+						RtfControlWord fontAttr = (RtfControlWord) faElem;
+						// font family (has only one of):
+						if (fontAttr.word.equals("fnil")) {
+							// font family Unknown/Default -> no font name applicable so far
+						} else 
+						if (fontAttr.word.equals("froman")) {
+							// font family Roman (proportionally spaced, serif)
+							fontFamily = "Times,serif";
+						} else 
+						if (fontAttr.word.equals("fswiss")) {
+							// font family Swiss (proportionally spaced, sans-serif)
+							fontFamily = "Helvetica,Swiss,sans-serif";
+						} else 
+						if (fontAttr.word.equals("fmodern")) {
+							// font family Fixed-pitch (typewriter)
+							fontFamily = "Courier,monospace";
+						} else 
+						if (fontAttr.word.equals("fscript")) {
+							// font family Script (like handwritten)
+							fontFamily = "Cursive";
+						} else 
+						if (fontAttr.word.equals("fdecor")) {
+							// font family Decorative
+							fontFamily = "\"ITC Zapf Chancery\"";
+						} else 
+						if (fontAttr.word.equals("ftech")) {
+							// font family Non-Unicode, technical, symbol
+							fontFamily = "Symbol,Wingdings";
+						} else 
+						if (fontAttr.word.equals("fbidi")) {
+							// font family bi-directional
+							fontFamily = "Miriam";
+						} else 
+						// charset (after font family setting):
+						if (fontAttr.word.equals("fcharset")) {
+							// font charset reference (with parameter)
+							// 0 = default charset as defined in RTF header (assume ANSI, CP1252)
+							// 2 = SYMBOL_CHARSET (CP42)
+							if (fontAttr.parameter == 2) {
+								// supersede font family by forcing "Symbol" font
+								fontFamily = "Symbol";
+							}
+						}
+						// /cpgN (code page) is ignored. 42 however would equal /fcharset2 (Symbol)
+					}
+					if (faElem instanceof RtfText) {
+						// font name
+						RtfText fontName = (RtfText) faElem;
+						String fontNameText = fontName.text;
+						if (!";".equals(fontNameText)) {
+							if (fontNameText.endsWith(";")) {
+								fontNameText = fontNameText.substring(0, fontNameText.length() - 1);
+							}
+							if (!fontFamily.contains(fontNameText)) {
+								// DRY...
+								if (fontFamily.length() > 0) {
+									fontFamily = "," + fontFamily;
+								}
+								fontFamily = "'" + fontNameText + "'" + fontFamily;
+							}
+						}
+					}
+				}
+				fonttbl.add(fontFamily);
+			}
+		}
+		
+		this.fonttbl = fonttbl;
+	}
+
+	/**
 	 * Extracts the color information available in the document and fills the
 	 * color table.
 	 *
@@ -108,8 +206,9 @@ public class RtfHtml {
 	 */
 	protected void formatGroup(RtfGroup group) {
 		// Can we ignore this group?
-		// Font table extraction not yet supported.
+		// Font table extraction.
 		if (group.getType().equals("fonttbl")) {
+			extractFontTable(group.children);
 			return;
 		}
 		// Extract color table.
@@ -165,6 +264,10 @@ public class RtfHtml {
 	protected void formatControlWord(RtfControlWord rtfWord) {
 		if (rtfWord.word.equals("plain") || rtfWord.word.equals("pard")) {
 			state.reset();
+		} else
+		// state changers, not printed immediately:
+		if (rtfWord.word.equals("f")) {
+			state.font = rtfWord.parameter;
 		} else if (rtfWord.word.equals("b")) {
 			state.bold = rtfWord.parameter > 0;
 		} else if (rtfWord.word.equals("i")) {
@@ -196,28 +299,30 @@ public class RtfHtml {
 			state.textColor = rtfWord.parameter;
 		} else if (rtfWord.word.equals("cb") || rtfWord.word.equals("chcbpat") || rtfWord.word.equals("highlight")) {
 			state.background = rtfWord.parameter;
-		} else if (rtfWord.word.equals("lquote")) {
-			output += "&lsquo;";
+		} else
+		// special characters, printed immediately:
+		if (rtfWord.word.equals("lquote")) {
+			applyStyle("&lsquo;");
 		} else if (rtfWord.word.equals("rquote")) {
-			output += "&rsquo;";
+			applyStyle("&rsquo;");
 		} else if (rtfWord.word.equals("ldblquote")) {
-			output += "&ldquo;";
+			applyStyle("&ldquo;");
 		} else if (rtfWord.word.equals("rdblquote")) {
-			output += "&rdquo;";
+			applyStyle("&rdquo;");
 		} else if (rtfWord.word.equals("emdash")) {
-			output += "&mdash;";
+			applyStyle("&mdash;");
 		} else if (rtfWord.word.equals("endash")) {
-			output += "&ndash;";
+			applyStyle("&ndash;");
 		} else if (rtfWord.word.equals("emspace")) {
-			output += "&emsp;";
+			applyStyle("&emsp;");
 		} else if (rtfWord.word.equals("enspace")) {
-			output += "&ensp;";
+			applyStyle("&ensp;");
 		} else if (rtfWord.word.equals("tab")) {
-			output += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+			applyStyle("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
 		} else if (rtfWord.word.equals("line")) {
-			output += "<br>";
+			applyStyle("<br>");
 		} else if (rtfWord.word.equals("bullet")) {
-			output += "&bull;";
+			applyStyle("&bull;");
 		} else if (rtfWord.word.equals("u")) {
 			applyStyle("&#" + rtfWord.parameter + ";");
 		} else if (rtfWord.word.equals("par") || rtfWord.word.equals("row")) {
@@ -241,6 +346,9 @@ public class RtfHtml {
 		if (!state.equals(previousState) || newRootPar) {
 			String span = "";
 
+			if (state.font >= 0) {
+				span += "font-family:" + printFontFamily(state.font) + ";";
+			}
 			if (state.bold) {
 				span += "font-weight:bold;";
 			}
@@ -312,6 +420,15 @@ public class RtfHtml {
 			css = "font-size:smaller;";
 		}
 		return css;
+	}
+
+	protected String printFontFamily(int index) {
+		// index is 0-based
+		if (index >= 0 && index < fonttbl.size()) {
+			return fonttbl.get(index);
+		} else {
+			return "";
+		}
 	}
 
 	/**

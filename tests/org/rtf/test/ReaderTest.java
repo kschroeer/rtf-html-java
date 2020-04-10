@@ -20,7 +20,7 @@ public class ReaderTest {
 		expectedBuilder.append("    <meta content=\"text/html;charset=UTF-8\" http-equiv=\"content-type\"/>\n");
 		expectedBuilder.append("  </head>\n");
 		expectedBuilder.append("  <body>\n");
-		expectedBuilder.append("<p><span style=\"font-size:15px;\">Hello World</span></p><p>\n");
+		expectedBuilder.append("<p><span style=\"font-family:'Calibri';font-size:15px;\">Hello World</span></p><p>\n");
 		expectedBuilder.append("  </body>\n");
 		expectedBuilder.append("</html>\n");
 		String expectedString = expectedBuilder.toString();

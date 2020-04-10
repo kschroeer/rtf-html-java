@@ -59,6 +59,11 @@ public class RtfState implements Cloneable {
 	public int fontSize;
 
 	/**
+	 * Font as a position in the font table
+	 */
+	public int font;
+
+	/**
 	 * Text color as a position in the color table
 	 */
 	public int textColor;
@@ -92,6 +97,7 @@ public class RtfState implements Cloneable {
 		newState.subscript = this.subscript;
 		newState.superscript = this.superscript;
 		newState.fontSize = this.fontSize;
+		newState.font = this.font;
 		newState.textColor = this.textColor;
 		newState.background = this.background;
 		return newState;
@@ -121,6 +127,7 @@ public class RtfState implements Cloneable {
 				&& this.dnup == anotherState.dnup
 				&& this.subscript == anotherState.subscript && this.superscript == anotherState.superscript
 				&& this.hidden == anotherState.hidden && this.fontSize == anotherState.fontSize
+				&& this.font == anotherState.font
 				&& this.textColor == anotherState.textColor && this.background == anotherState.background;
 	}
 
@@ -137,6 +144,7 @@ public class RtfState implements Cloneable {
 		subscript = false;
 		superscript = false;
 		fontSize = 0;
+		font = 0;
 		textColor = 0;
 		background = 0;
 	}
