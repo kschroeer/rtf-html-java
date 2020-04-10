@@ -180,7 +180,7 @@ public class RtfHtml {
 		} else if (rtfWord.word.equals("fs")) {
 			state.fontSize = (int) Math.ceil((rtfWord.parameter / 24.0) * 16.0);
 		} else if (rtfWord.word.equals("dn")) {
-			state.dnup = (int) Math.ceil((rtfWord.parameter / 24.0) * -16.0);
+			state.dnup = (int) Math.ceil((rtfWord.parameter / 24.0) * 16.0) * -1;
 		} else if (rtfWord.word.equals("up")) {
 			state.dnup = (int) Math.ceil((rtfWord.parameter / 24.0) * 16.0);
 		} else if (rtfWord.word.equals("sub")) {
