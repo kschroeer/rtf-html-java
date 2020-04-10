@@ -97,13 +97,14 @@ public class TextTest {
 
 	@Test
 	public void testEntities() throws RtfParseException {
-		String expectedString = "<p><span style=\"font-size:15px;\">Hello &ndash; World</span></p><p>";
+		String expectedString = "<p><span style=\"font-size:15px;\">Hello &ndash; &nbsp; World</span></p><p>";
 
 		StringBuilder rtfBuilder = new StringBuilder();
-		rtfBuilder.append(
-				"{\\rtf1\\ansi\\ansicpg1252\\deff0\\nouicompat\\deflang1031{\\fonttbl{\\f0\\fnil\\fcharset0 Calibri;}{\\f1\\fnil Calibri;}}\r\n");
+		rtfBuilder.append("{\\rtf1\\ansi\\ansicpg1252\\deff0\\nouicompat\\deflang1031");
+		rtfBuilder.append("{\\fonttbl{\\f0\\fnil\\fcharset0 Calibri;}{\\f1\\fnil Calibri;}}\r\n");
 		rtfBuilder.append("{\\*\\generator Riched20 6.3.9600}\\viewkind4\\uc1 \r\n");
-		rtfBuilder.append("\\pard\\sa200\\sl276\\slmult1\\f0\\fs22\\lang7 Hello \\f1\\endash  World\\f0\\par\r\n");
+		rtfBuilder.append("\\pard\\sa200\\sl276\\slmult1\\f0\\fs22\\lang7 Hello ");
+		rtfBuilder.append("\\f1\\endash  \\~ World\\f0\\par\r\n");
 		rtfBuilder.append("}\r\n");
 		String rtfString = rtfBuilder.toString();
 
