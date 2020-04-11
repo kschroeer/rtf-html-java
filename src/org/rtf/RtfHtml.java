@@ -116,7 +116,7 @@ public class RtfHtml {
 						} else 
 						if (fontAttr.word.equals("fdecor")) {
 							// font family Decorative
-							fontFamily = "\"ITC Zapf Chancery\"";
+							fontFamily = "'ITC Zapf Chancery'";
 						} else 
 						if (fontAttr.word.equals("ftech")) {
 							// font family Non-Unicode, technical, symbol
