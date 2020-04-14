@@ -33,9 +33,35 @@ public class RtfState implements Cloneable {
 	public boolean hidden;
 
 	/**
+	 * Attribute that specifies that the text should be beneath the baseline ("down", negative) or above the baseline ("up", positive) by N.
+	 * <br>RTF "dnN" move down N half-points; does not imply font size reduction, thus font size is given separately --> value negative from param, fontsize unchanged.
+	 * <br>RTF "upN" move up N half-points; does not imply font size reduction, thus font size is given separately --> value positive from param, fontsize unchanged.
+	 */
+	public int dnup;
+
+	/**
+	 * Attribute that specifies that the text should be subscript. Switchs of superscript.
+	 * <br>RTF "sub" denotes subscript and implies font size reduction --> true, actual fontsize is 1/2 of actual font size.
+	 * <br>Turned of by /nosupersub.
+	 */
+	public boolean subscript;
+
+	/**
+	 * Attribute that specifies that the text should be superscript. Switches of subscript.
+	 * <br>RTF "super" denotes superscript and implies font size reduction --> true, actual fontsize is 1/2 of actual font size.
+	 * <br>Turned of by /nosupersub.
+	 */
+	public boolean superscript;
+
+	/**
 	 * Font size in pixels
 	 */
 	public int fontSize;
+
+	/**
+	 * Font as a position in the font table
+	 */
+	public int font;
 
 	/**
 	 * Text color as a position in the color table
@@ -67,7 +93,11 @@ public class RtfState implements Cloneable {
 		newState.underline = this.underline;
 		newState.strike = this.strike;
 		newState.hidden = this.hidden;
+		newState.dnup = this.dnup;
+		newState.subscript = this.subscript;
+		newState.superscript = this.superscript;
 		newState.fontSize = this.fontSize;
+		newState.font = this.font;
 		newState.textColor = this.textColor;
 		newState.background = this.background;
 		return newState;
@@ -94,7 +124,10 @@ public class RtfState implements Cloneable {
 		RtfState anotherState = (RtfState) obj;
 		return this.bold == anotherState.bold && this.italic == anotherState.italic
 				&& this.underline == anotherState.underline && this.strike == anotherState.strike
+				&& this.dnup == anotherState.dnup
+				&& this.subscript == anotherState.subscript && this.superscript == anotherState.superscript
 				&& this.hidden == anotherState.hidden && this.fontSize == anotherState.fontSize
+				&& this.font == anotherState.font
 				&& this.textColor == anotherState.textColor && this.background == anotherState.background;
 	}
 
@@ -107,7 +140,11 @@ public class RtfState implements Cloneable {
 		underline = false;
 		strike = false;
 		hidden = false;
+		dnup = 0;
+		subscript = false;
+		superscript = false;
 		fontSize = 0;
+		font = 0;
 		textColor = 0;
 		background = 0;
 	}
